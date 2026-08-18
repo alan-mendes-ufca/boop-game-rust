@@ -105,7 +105,7 @@ impl Jogador {
 
     /// Jogador da vez a partir do numero do turno (turno 0 = jogador 1).
     pub fn da_vez(turno: usize) -> Jogador {
-        if turno % 2 == 0 {
+        if turno.is_multiple_of(2) {
             Jogador::Um
         } else {
             Jogador::Dois
