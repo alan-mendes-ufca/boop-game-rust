@@ -1,0 +1,16 @@
+[package]
+name = "boop"
+version = "0.1.0"
+edition = "2021"
+description = "Boop - jogo de tabuleiro, reimplementacao em Rust do projeto original em C"
+license = "MIT"
+
+[lib]
+name = "boop"
+path = "src/lib.rs"
+
+[[bin]]
+name = "boop"
+path = "src/main.rs"
+
+[dependencies]
