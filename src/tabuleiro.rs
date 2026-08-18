@@ -45,24 +45,12 @@ pub fn exibir_tabuleiro(tabuleiro: &Tabuleiro, maos: &Maos, atual: Jogador) {
     let mao1 = maos.ver(Jogador::Um);
     let mao2 = maos.ver(Jogador::Dois);
 
-    println!(
-        "{}Gatinhos Jogador 1: {}{}",
-        VERMELHO, mao1.gatinhos, RESET
-    );
-    print!(
-        "{}Gatão Jogador 1: {}{}",
-        VERMELHO, mao1.gatoes, RESET
-    );
+    println!("{}Gatinhos Jogador 1: {}{}", VERMELHO, mao1.gatinhos, RESET);
+    print!("{}Gatão Jogador 1: {}{}", VERMELHO, mao1.gatoes, RESET);
     println!();
 
-    println!(
-        "{}Gatinhos Jogador 2: {}{}",
-        AZUL, mao2.gatinhos, RESET
-    );
-    print!(
-        "{}Gatão Jogador 2: {}{}",
-        AZUL, mao2.gatoes, RESET
-    );
+    println!("{}Gatinhos Jogador 2: {}{}", AZUL, mao2.gatinhos, RESET);
+    print!("{}Gatão Jogador 2: {}{}", AZUL, mao2.gatoes, RESET);
     println!();
     println!();
 
@@ -120,14 +108,8 @@ mod tests {
         assert_eq!(linhas.len(), 7, "Tabuleiro vazio deve ter 7 linhas");
 
         // Primeira linha deve ter os rótulos das colunas
-        assert!(
-            linhas[0].contains("A"),
-            "Cabeçalho deve conter rótulo 'A'"
-        );
-        assert!(
-            linhas[0].contains("F"),
-            "Cabeçalho deve conter rótulo 'F'"
-        );
+        assert!(linhas[0].contains("A"), "Cabeçalho deve conter rótulo 'A'");
+        assert!(linhas[0].contains("F"), "Cabeçalho deve conter rótulo 'F'");
     }
 
     #[test]
@@ -139,7 +121,10 @@ mod tests {
         // Cada linha do tabuleiro (excepto cabeçalho) deve ter 7 pipes
         for linha in &linhas[1..] {
             let pipe_count = linha.matches('|').count();
-            assert_eq!(pipe_count, 7, "Cada linha deve ter 7 pipes (1 inicial + 6 separadores)");
+            assert_eq!(
+                pipe_count, 7,
+                "Cada linha deve ter 7 pipes (1 inicial + 6 separadores)"
+            );
         }
     }
 
@@ -177,10 +162,7 @@ mod tests {
             "Saída deve conter glifo do gatão"
         );
         // Deve conter a cor azul (código ANSI)
-        assert!(
-            saida.contains(AZUL),
-            "Saída deve conter código de cor AZUL"
-        );
+        assert!(saida.contains(AZUL), "Saída deve conter código de cor AZUL");
     }
 
     #[test]

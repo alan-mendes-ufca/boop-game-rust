@@ -82,7 +82,11 @@ pub fn parse_jogada(entrada: &str) -> Result<Jogada, EntradaInvalida> {
     }
     let coluna = indice_coluna as usize;
 
-    Ok(Jogada { peca, linha, coluna })
+    Ok(Jogada {
+        peca,
+        linha,
+        coluna,
+    })
 }
 
 /// Pede uma jogada ao jogador ate receber uma entrada bem formada.

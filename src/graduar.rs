@@ -207,8 +207,20 @@ mod tests {
     fn linha_com_donos_diferentes_nao_gradua() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        coloca(&mut tabuleiro, &mut maos, &[(0, 0), (0, 1)], Peca::Gatinho, Jogador::Um);
-        coloca(&mut tabuleiro, &mut maos, &[(0, 2)], Peca::Gatinho, Jogador::Dois);
+        coloca(
+            &mut tabuleiro,
+            &mut maos,
+            &[(0, 0), (0, 1)],
+            Peca::Gatinho,
+            Jogador::Um,
+        );
+        coloca(
+            &mut tabuleiro,
+            &mut maos,
+            &[(0, 2)],
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         let quantos = graduar(&mut tabuleiro, Jogador::Um, &mut maos);
 
@@ -220,8 +232,20 @@ mod tests {
     fn gatinho_gatinho_gatao_nao_gradua() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        coloca(&mut tabuleiro, &mut maos, &[(0, 0), (0, 1)], Peca::Gatinho, Jogador::Um);
-        coloca(&mut tabuleiro, &mut maos, &[(0, 2)], Peca::Gatao, Jogador::Um);
+        coloca(
+            &mut tabuleiro,
+            &mut maos,
+            &[(0, 0), (0, 1)],
+            Peca::Gatinho,
+            Jogador::Um,
+        );
+        coloca(
+            &mut tabuleiro,
+            &mut maos,
+            &[(0, 2)],
+            Peca::Gatao,
+            Jogador::Um,
+        );
 
         let quantos = graduar(&mut tabuleiro, Jogador::Um, &mut maos);
 
@@ -313,7 +337,10 @@ mod tests {
         let quantos = graduar(&mut tabuleiro, Jogador::Um, &mut maos);
 
         assert_eq!(quantos, 2);
-        assert!(vazia(&tabuleiro, &[(0, 0), (0, 1), (0, 2), (3, 0), (3, 1), (3, 2)]));
+        assert!(vazia(
+            &tabuleiro,
+            &[(0, 0), (0, 1), (0, 2), (3, 0), (3, 1), (3, 2)]
+        ));
         assert_eq!(maos.ver(Jogador::Um).gatoes, 6);
         assert_eq!(maos.ver(Jogador::Um).ativas, 0);
     }
@@ -322,7 +349,13 @@ mod tests {
     fn tabuleiro_sem_trios_nao_altera_nada() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        coloca(&mut tabuleiro, &mut maos, &[(0, 0), (5, 5)], Peca::Gatinho, Jogador::Um);
+        coloca(
+            &mut tabuleiro,
+            &mut maos,
+            &[(0, 0), (5, 5)],
+            Peca::Gatinho,
+            Jogador::Um,
+        );
 
         let quantos = graduar(&mut tabuleiro, Jogador::Um, &mut maos);
 

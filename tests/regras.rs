@@ -23,10 +23,20 @@ use boop::vitoria::{estado_do_jogo, verifica_vitoria, verificar_empate, FimDeJog
 /// transforma em gatao antes de colocar, preservando a invariante
 /// `gatinhos + gatoes + ativas == 8` (equivalente a um trio ja graduado
 /// antes do cenario comecar).
-fn poe(tabuleiro: &mut Tabuleiro, maos: &mut Maos, linha: usize, coluna: usize, peca: Peca, dono: Jogador) {
+fn poe(
+    tabuleiro: &mut Tabuleiro,
+    maos: &mut Maos,
+    linha: usize,
+    coluna: usize,
+    peca: Peca,
+    dono: Jogador,
+) {
     if peca == Peca::Gatao && !maos.ver(dono).tem(Peca::Gatao) {
         let mao = maos.de(dono);
-        assert!(mao.gatinhos > 0, "sem gatinho para converter em gatao no cenario de teste");
+        assert!(
+            mao.gatinhos > 0,
+            "sem gatinho para converter em gatao no cenario de teste"
+        );
         mao.gatinhos -= 1;
         mao.gatoes += 1;
     }
@@ -55,7 +65,10 @@ mod verificar_jogada_regras {
     fn aceita_colocar_em_casa_vazia_quando_ha_peca_na_mao() {
         let tabuleiro = Tabuleiro::novo();
         let mao = Mao::nova();
-        assert_eq!(verificar_jogada(&tabuleiro, 3, 3, Peca::Gatinho, &mao), Ok(()));
+        assert_eq!(
+            verificar_jogada(&tabuleiro, 3, 3, Peca::Gatinho, &mao),
+            Ok(())
+        );
     }
 
     #[test]
@@ -118,7 +131,14 @@ mod boop_basico {
         let mut maos = Maos::novas();
         // Peca alvo em (3, 3); sera colocada uma peca em (3, 2), empurrando
         // o alvo para (3, 4).
-        poe(&mut tabuleiro, &mut maos, 3, 3, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            3,
+            3,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         faz_boop(&mut tabuleiro, 3, 2, Peca::Gatinho, Jogador::Um, &mut maos);
 
@@ -127,7 +147,10 @@ mod boop_basico {
             Some(Gato::novo(Peca::Gatinho, Jogador::Dois)),
             "a peca alvo deveria ter sido empurrada uma casa para longe"
         );
-        assert!(tabuleiro.vazia(3, 3), "a casa de origem da peca empurrada deveria ficar vazia");
+        assert!(
+            tabuleiro.vazia(3, 3),
+            "a casa de origem da peca empurrada deveria ficar vazia"
+        );
         assert_eq!(
             tabuleiro.get(3, 2),
             Some(Gato::novo(Peca::Gatinho, Jogador::Um)),
@@ -139,7 +162,14 @@ mod boop_basico {
     fn casas_nao_adjacentes_nao_sao_afetadas() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        poe(&mut tabuleiro, &mut maos, 0, 5, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            0,
+            5,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         faz_boop(&mut tabuleiro, 3, 3, Peca::Gatinho, Jogador::Um, &mut maos);
 
@@ -155,7 +185,14 @@ mod boop_basico {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
         // Alvo em (3, 3) e destino (3, 4) ja ocupado por outra peca.
-        poe(&mut tabuleiro, &mut maos, 3, 3, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            3,
+            3,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
         poe(&mut tabuleiro, &mut maos, 3, 4, Peca::Gatinho, Jogador::Um);
 
         faz_boop(&mut tabuleiro, 3, 2, Peca::Gatinho, Jogador::Um, &mut maos);
@@ -194,19 +231,32 @@ mod boop_forca_das_pecas {
             Some(Gato::novo(Peca::Gatao, Jogador::Dois)),
             "gatao nao deveria ser movido por um gatinho"
         );
-        assert!(tabuleiro.vazia(3, 4), "destino deveria continuar vazio, pois nada se moveu");
+        assert!(
+            tabuleiro.vazia(3, 4),
+            "destino deveria continuar vazio, pois nada se moveu"
+        );
     }
 
     #[test]
     fn gatao_empurra_gatinho() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        poe(&mut tabuleiro, &mut maos, 3, 3, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            3,
+            3,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         faz_boop(&mut tabuleiro, 3, 2, Peca::Gatao, Jogador::Um, &mut maos);
 
         assert!(tabuleiro.vazia(3, 3));
-        assert_eq!(tabuleiro.get(3, 4), Some(Gato::novo(Peca::Gatinho, Jogador::Dois)));
+        assert_eq!(
+            tabuleiro.get(3, 4),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Dois))
+        );
     }
 
     #[test]
@@ -218,19 +268,32 @@ mod boop_forca_das_pecas {
         faz_boop(&mut tabuleiro, 3, 2, Peca::Gatao, Jogador::Um, &mut maos);
 
         assert!(tabuleiro.vazia(3, 3));
-        assert_eq!(tabuleiro.get(3, 4), Some(Gato::novo(Peca::Gatao, Jogador::Dois)));
+        assert_eq!(
+            tabuleiro.get(3, 4),
+            Some(Gato::novo(Peca::Gatao, Jogador::Dois))
+        );
     }
 
     #[test]
     fn gatinho_empurra_outro_gatinho() {
         let mut tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        poe(&mut tabuleiro, &mut maos, 3, 3, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            3,
+            3,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         faz_boop(&mut tabuleiro, 3, 2, Peca::Gatinho, Jogador::Um, &mut maos);
 
         assert!(tabuleiro.vazia(3, 3));
-        assert_eq!(tabuleiro.get(3, 4), Some(Gato::novo(Peca::Gatinho, Jogador::Dois)));
+        assert_eq!(
+            tabuleiro.get(3, 4),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Dois))
+        );
     }
 }
 
@@ -247,7 +310,14 @@ mod boop_para_fora_do_tabuleiro {
         let mut maos = Maos::novas();
         // A peca que sera empurrada para fora pertence ao ADVERSARIO
         // (Jogador::Dois) do jogador da vez (Jogador::Um), na borda inferior.
-        poe(&mut tabuleiro, &mut maos, 5, 3, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            5,
+            3,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         let mao_um_antes = *maos.ver(Jogador::Um);
         let mao_dois_antes = *maos.ver(Jogador::Dois);
@@ -256,7 +326,10 @@ mod boop_para_fora_do_tabuleiro {
         // destino seguinte (6, 3) fica fora do tabuleiro.
         faz_boop(&mut tabuleiro, 4, 3, Peca::Gatinho, Jogador::Um, &mut maos);
 
-        assert!(tabuleiro.vazia(5, 3), "peca empurrada para fora some do tabuleiro");
+        assert!(
+            tabuleiro.vazia(5, 3),
+            "peca empurrada para fora some do tabuleiro"
+        );
         assert_eq!(
             tabuleiro.get(4, 3),
             Some(Gato::novo(Peca::Gatinho, Jogador::Um)),
@@ -329,7 +402,14 @@ mod graduacao_de_trios {
         let mut maos = Maos::novas();
         let posicoes = [(0, 4), (1, 4), (2, 4)];
         for &(l, c) in &posicoes {
-            poe(&mut tabuleiro, &mut maos, l, c, Peca::Gatinho, Jogador::Dois);
+            poe(
+                &mut tabuleiro,
+                &mut maos,
+                l,
+                c,
+                Peca::Gatinho,
+                Jogador::Dois,
+            );
         }
 
         let quantos = graduar(&mut tabuleiro, Jogador::Dois, &mut maos);
@@ -364,7 +444,14 @@ mod graduacao_de_trios {
         // uma coluna a cada passo.
         let posicoes = [(5, 0), (4, 1), (3, 2)];
         for &(l, c) in &posicoes {
-            poe(&mut tabuleiro, &mut maos, l, c, Peca::Gatinho, Jogador::Dois);
+            poe(
+                &mut tabuleiro,
+                &mut maos,
+                l,
+                c,
+                Peca::Gatinho,
+                Jogador::Dois,
+            );
         }
 
         let quantos = graduar(&mut tabuleiro, Jogador::Dois, &mut maos);
@@ -387,7 +474,10 @@ mod graduacao_de_trios {
 
         assert_eq!(quantos, 1, "quatro em linha devem formar apenas um trio");
         // Exatamente uma peca deveria sobrar no tabuleiro.
-        let restantes = posicoes.iter().filter(|&&(l, c)| !tabuleiro.vazia(l, c)).count();
+        let restantes = posicoes
+            .iter()
+            .filter(|&&(l, c)| !tabuleiro.vazia(l, c))
+            .count();
         assert_eq!(restantes, 1, "uma peca deveria sobrar sem formar novo trio");
         assert_eq!(maos.ver(Jogador::Um).gatoes, 3);
         assert_eq!(maos.ver(Jogador::Um).ativas, 1);
@@ -407,7 +497,11 @@ mod graduacao_de_trios {
 
         assert_eq!(quantos, 0);
         assert!(!todas_vazias(&tabuleiro, &posicoes));
-        assert_eq!(maos.ver(Jogador::Um).ativas, 3, "nenhuma peca deveria ter saido do tabuleiro");
+        assert_eq!(
+            maos.ver(Jogador::Um).ativas,
+            3,
+            "nenhuma peca deveria ter saido do tabuleiro"
+        );
     }
 
     #[test]
@@ -416,7 +510,14 @@ mod graduacao_de_trios {
         let mut maos = Maos::novas();
         poe(&mut tabuleiro, &mut maos, 1, 0, Peca::Gatinho, Jogador::Um);
         poe(&mut tabuleiro, &mut maos, 1, 1, Peca::Gatinho, Jogador::Um);
-        poe(&mut tabuleiro, &mut maos, 1, 2, Peca::Gatinho, Jogador::Dois);
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            1,
+            2,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
 
         let quantos_um = graduar(&mut tabuleiro, Jogador::Um, &mut maos);
         let quantos_dois = graduar(&mut tabuleiro, Jogador::Dois, &mut maos);
@@ -513,7 +614,11 @@ mod condicoes_de_vitoria {
     fn cama_cheia_vence_para_o_jogador_com_oito_pecas_ativas() {
         let tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        maos.jogador2 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
+        maos.jogador2 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 8,
+        };
 
         assert_eq!(verifica_vitoria(&tabuleiro, &maos), Some(Jogador::Dois));
     }
@@ -522,7 +627,11 @@ mod condicoes_de_vitoria {
     fn sete_pecas_ativas_nao_e_cama_cheia() {
         let tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        maos.jogador1 = Mao { gatinhos: 1, gatoes: 0, ativas: 7 };
+        maos.jogador1 = Mao {
+            gatinhos: 1,
+            gatoes: 0,
+            ativas: 7,
+        };
 
         assert_eq!(verifica_vitoria(&tabuleiro, &maos), None);
     }
@@ -538,8 +647,16 @@ mod empate_e_estado_do_jogo {
     #[test]
     fn empate_quando_as_duas_maos_estao_vazias() {
         let mut maos = Maos::novas();
-        maos.jogador1 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
-        maos.jogador2 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
+        maos.jogador1 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 8,
+        };
+        maos.jogador2 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 8,
+        };
 
         assert!(verificar_empate(&maos));
     }
@@ -547,8 +664,16 @@ mod empate_e_estado_do_jogo {
     #[test]
     fn sem_empate_quando_um_jogador_ainda_tem_pecas_na_mao() {
         let mut maos = Maos::novas();
-        maos.jogador1 = Mao { gatinhos: 0, gatoes: 1, ativas: 7 };
-        maos.jogador2 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
+        maos.jogador1 = Mao {
+            gatinhos: 0,
+            gatoes: 1,
+            ativas: 7,
+        };
+        maos.jogador2 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 8,
+        };
 
         assert!(!verificar_empate(&maos));
     }
@@ -564,8 +689,19 @@ mod empate_e_estado_do_jogo {
     fn estado_do_jogo_relata_empate_quando_nao_ha_vitoria() {
         let tabuleiro = Tabuleiro::novo();
         let mut maos = Maos::novas();
-        maos.jogador1 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
-        maos.jogador2 = Mao { gatinhos: 0, gatoes: 0, ativas: 8 };
+        // Maos sem pecas para jogar, mas SEM cama cheia (ativas < 8) e sem
+        // nenhum trio de gatoes no tabuleiro: nao ha vitoria possivel, so
+        // empate.
+        maos.jogador1 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 3,
+        };
+        maos.jogador2 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 2,
+        };
 
         assert_eq!(estado_do_jogo(&tabuleiro, &maos), Some(FimDeJogo::Empate));
     }
@@ -580,13 +716,24 @@ mod empate_e_estado_do_jogo {
         tabuleiro.set(0, 2, Some(Gato::novo(Peca::Gatao, Jogador::Um)));
 
         let mut maos = Maos::novas();
-        maos.jogador1 = Mao { gatinhos: 0, gatoes: 0, ativas: 0 };
-        maos.jogador2 = Mao { gatinhos: 0, gatoes: 0, ativas: 0 };
+        maos.jogador1 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 0,
+        };
+        maos.jogador2 = Mao {
+            gatinhos: 0,
+            gatoes: 0,
+            ativas: 0,
+        };
 
         // A condicao de empate, isoladamente, seria verdadeira aqui.
         assert!(verificar_empate(&maos));
         // Mas o estado do jogo deve reportar a vitoria, nao o empate.
-        assert_eq!(estado_do_jogo(&tabuleiro, &maos), Some(FimDeJogo::Vitoria(Jogador::Um)));
+        assert_eq!(
+            estado_do_jogo(&tabuleiro, &maos),
+            Some(FimDeJogo::Vitoria(Jogador::Um))
+        );
     }
 }
 
@@ -601,7 +748,11 @@ mod parse_jogada_regras {
     fn aceita_entrada_valida_no_canto_superior_esquerdo() {
         assert_eq!(
             parse_jogada("g 1 A"),
-            Ok(Jogada { peca: Peca::Gatinho, linha: 0, coluna: 0 })
+            Ok(Jogada {
+                peca: Peca::Gatinho,
+                linha: 0,
+                coluna: 0
+            })
         );
     }
 
@@ -609,7 +760,11 @@ mod parse_jogada_regras {
     fn aceita_entrada_valida_no_canto_inferior_direito() {
         assert_eq!(
             parse_jogada("G 6 F"),
-            Ok(Jogada { peca: Peca::Gatao, linha: 5, coluna: 5 })
+            Ok(Jogada {
+                peca: Peca::Gatao,
+                linha: 5,
+                coluna: 5
+            })
         );
     }
 
@@ -617,7 +772,11 @@ mod parse_jogada_regras {
     fn aceita_coluna_minuscula() {
         assert_eq!(
             parse_jogada("g 4 d"),
-            Ok(Jogada { peca: Peca::Gatinho, linha: 3, coluna: 3 })
+            Ok(Jogada {
+                peca: Peca::Gatinho,
+                linha: 3,
+                coluna: 3
+            })
         );
     }
 
@@ -662,18 +821,68 @@ mod invariante_das_pecas {
         let mut maos = Maos::novas();
 
         let jogadas: [(Jogador, Jogada); 6] = [
-            (Jogador::Um, Jogada { peca: Peca::Gatinho, linha: 2, coluna: 2 }),
-            (Jogador::Dois, Jogada { peca: Peca::Gatinho, linha: 3, coluna: 3 }),
-            (Jogador::Um, Jogada { peca: Peca::Gatinho, linha: 2, coluna: 3 }),
-            (Jogador::Dois, Jogada { peca: Peca::Gatinho, linha: 0, coluna: 0 }),
-            (Jogador::Um, Jogada { peca: Peca::Gatinho, linha: 3, coluna: 2 }),
-            (Jogador::Dois, Jogada { peca: Peca::Gatinho, linha: 5, coluna: 5 }),
+            (
+                Jogador::Um,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 2,
+                    coluna: 2,
+                },
+            ),
+            (
+                Jogador::Dois,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 3,
+                    coluna: 3,
+                },
+            ),
+            (
+                Jogador::Um,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 2,
+                    coluna: 3,
+                },
+            ),
+            (
+                Jogador::Dois,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 0,
+                    coluna: 0,
+                },
+            ),
+            (
+                Jogador::Um,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 3,
+                    coluna: 2,
+                },
+            ),
+            (
+                Jogador::Dois,
+                Jogada {
+                    peca: Peca::Gatinho,
+                    linha: 5,
+                    coluna: 5,
+                },
+            ),
         ];
 
         for (jogador, jogada) in jogadas {
             fluxo_jogo(&mut tabuleiro, &jogada, jogador, &mut maos);
-            assert_eq!(maos.ver(Jogador::Um).total(), 8, "invariante quebrada para o Jogador 1");
-            assert_eq!(maos.ver(Jogador::Dois).total(), 8, "invariante quebrada para o Jogador 2");
+            assert_eq!(
+                maos.ver(Jogador::Um).total(),
+                8,
+                "invariante quebrada para o Jogador 1"
+            );
+            assert_eq!(
+                maos.ver(Jogador::Dois).total(),
+                8,
+                "invariante quebrada para o Jogador 2"
+            );
         }
     }
 
@@ -686,7 +895,11 @@ mod invariante_das_pecas {
         poe(&mut tabuleiro, &mut maos, 0, 0, Peca::Gatinho, Jogador::Um);
         poe(&mut tabuleiro, &mut maos, 0, 1, Peca::Gatinho, Jogador::Um);
 
-        let jogada = Jogada { peca: Peca::Gatinho, linha: 0, coluna: 2 };
+        let jogada = Jogada {
+            peca: Peca::Gatinho,
+            linha: 0,
+            coluna: 2,
+        };
         fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
 
         assert!(todas_vazias(&tabuleiro, &[(0, 0), (0, 1), (0, 2)]));
