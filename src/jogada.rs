@@ -48,9 +48,9 @@ pub fn verificar_jogada(
     Ok(())
 }
 
-/// Coloca a peca na casa e aplica o boop nas 8 direcoes.
+/// Coloca a peca na casa, sem empurrar nada.
 /// Assume que [`verificar_jogada`] ja aprovou a jogada.
-pub fn faz_boop(
+pub fn colocar_peca(
     tabuleiro: &mut Tabuleiro,
     linha: usize,
     coluna: usize,
@@ -60,12 +60,39 @@ pub fn faz_boop(
 ) {
     maos.de(dono).colocar(peca);
     tabuleiro.set(linha, coluna, Some(Gato::novo(peca, dono)));
+}
 
-    // Aplica o boop nas 8 direcoes, em sequencia, sobre o estado corrente
-    // do tabuleiro (como o C faz: cada direcao ve o resultado das anteriores).
+/// Aplica o boop nas 8 direcoes a partir da casa indicada.
+pub fn boop_nas_oito_direcoes(
+    tabuleiro: &mut Tabuleiro,
+    linha: usize,
+    coluna: usize,
+    peca: Peca,
+    maos: &mut Maos,
+) {
+    // As direcoes sao aplicadas em sequencia, sobre o estado corrente do
+    // tabuleiro (como o C faz: cada direcao ve o resultado das anteriores).
     for direcao in DIRECOES_BOOP {
         aplicar_boop(tabuleiro, linha, coluna, direcao, peca, maos);
     }
+}
+
+/// Coloca a peca na casa e aplica o boop nas 8 direcoes.
+/// Assume que [`verificar_jogada`] ja aprovou a jogada.
+///
+/// Esta funcao empurra sempre; a regra de que a graduacao tem prioridade
+/// sobre o boop mora em `funcoes::fluxo_jogo`, que decide se chama
+/// [`boop_nas_oito_direcoes`] depois de [`colocar_peca`].
+pub fn faz_boop(
+    tabuleiro: &mut Tabuleiro,
+    linha: usize,
+    coluna: usize,
+    peca: Peca,
+    dono: Jogador,
+    maos: &mut Maos,
+) {
+    colocar_peca(tabuleiro, linha, coluna, peca, dono, maos);
+    boop_nas_oito_direcoes(tabuleiro, linha, coluna, peca, maos);
 }
 
 /// Aplica o boop em uma unica direcao a partir da peca recem colocada.

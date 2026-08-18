@@ -31,6 +31,7 @@ Ser o primeiro jogador a conseguir **três gatões (gatos adultos)** alinhados c
    - Os 3 gatinhos são removidos do tabuleiro
    - O jogador recebe **3 gatões** no inventário (para serem colocados em turnos futuros)
    - Cada peça só conta em um trio
+   - **A graduação tem prioridade sobre o boop**: se a peça colocada já fecha o trio, o empurrão daquele turno não acontece (senão ele desfaria o alinhamento antes da graduação ser avaliada). O boop continua normal quando a jogada não fecha trio — inclusive quando é o próprio boop que forma o alinhamento
 
 4. **Condições de Vitória**
    - **Vitória Principal**: Formar uma linha de 3 **gatões** consecutivos no tabuleiro
@@ -80,6 +81,7 @@ Não há dependências externas; o projeto usa apenas a biblioteca padrão do Ru
 - **Célula do tabuleiro**: Representada como `Option<Gato>`, eliminando peças sem dono e comparações de ponteiro nulo
 - **Alocação de memória**: Tabuleiro é array fixo (não usa `malloc`), sem risco de vazamento ou falha de alocação
 - **Graduação**: Só processa trios de gatinhos do mesmo dono, sem recontagem de linhas sobrepostas
+- **Prioridade da graduação**: Jogada que fecha um trio não aplica boop, então o alinhamento não é desfeito antes de graduar (no original o boop sempre prevalecia)
 - **Vitória**: Exige trio de **gatões** (não aceita gatinhos)
 - **Entrada**: Validação robusta em vez de `scanf` desprotegido
 - **Invariante de peças**: Contagem garantida por `gatinhos + gatoes + ativas == 8`

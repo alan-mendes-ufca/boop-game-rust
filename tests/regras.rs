@@ -907,3 +907,161 @@ mod invariante_das_pecas {
         assert_eq!(maos.ver(Jogador::Um).total(), 8);
     }
 }
+
+// ---------------------------------------------------------------------
+// 15. Graduacao tem prioridade sobre o boop
+// ---------------------------------------------------------------------
+
+mod graduacao_tem_prioridade_sobre_o_boop {
+    use super::*;
+
+    #[test]
+    fn jogada_que_fecha_trio_pelo_meio_nao_boopa_as_pontas() {
+        let mut tabuleiro = Tabuleiro::novo();
+        let mut maos = Maos::novas();
+        // Duas pontas do trio, com o buraco no meio: sem a prioridade da
+        // graduacao o boop expulsaria (0, 0) do tabuleiro e empurraria
+        // (0, 2) para (0, 3), desfazendo o alinhamento.
+        poe(&mut tabuleiro, &mut maos, 0, 0, Peca::Gatinho, Jogador::Um);
+        poe(&mut tabuleiro, &mut maos, 0, 2, Peca::Gatinho, Jogador::Um);
+        let gatinhos_antes = maos.ver(Jogador::Um).gatinhos;
+
+        let jogada = Jogada {
+            peca: Peca::Gatinho,
+            linha: 0,
+            coluna: 1,
+        };
+        fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
+
+        assert!(todas_vazias(&tabuleiro, &[(0, 0), (0, 1), (0, 2)]));
+        assert!(todas_vazias(&tabuleiro, &[(0, 3)]), "ninguem foi empurrado");
+        assert_eq!(maos.ver(Jogador::Um).gatoes, 3);
+        // O gatinho de (0, 0) graduou; nao voltou para a mao por expulsao.
+        assert_eq!(maos.ver(Jogador::Um).gatinhos, gatinhos_antes - 1);
+        assert_eq!(maos.ver(Jogador::Um).ativas, 0);
+        assert_eq!(maos.ver(Jogador::Um).total(), 8);
+    }
+
+    #[test]
+    fn jogada_que_fecha_trio_nao_empurra_peca_do_adversario() {
+        let mut tabuleiro = Tabuleiro::novo();
+        let mut maos = Maos::novas();
+        poe(&mut tabuleiro, &mut maos, 2, 1, Peca::Gatinho, Jogador::Um);
+        poe(&mut tabuleiro, &mut maos, 2, 3, Peca::Gatinho, Jogador::Um);
+        // Peca do adversario vizinha da casa jogada, com destino livre.
+        poe(
+            &mut tabuleiro,
+            &mut maos,
+            1,
+            2,
+            Peca::Gatinho,
+            Jogador::Dois,
+        );
+
+        let jogada = Jogada {
+            peca: Peca::Gatinho,
+            linha: 2,
+            coluna: 2,
+        };
+        fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
+
+        // A supressao do boop e total: nem as pecas do adversario se movem.
+        assert_eq!(
+            tabuleiro.get(1, 2),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Dois))
+        );
+        assert!(todas_vazias(&tabuleiro, &[(0, 2)]));
+        assert!(todas_vazias(&tabuleiro, &[(2, 1), (2, 2), (2, 3)]));
+        assert_eq!(maos.ver(Jogador::Um).gatoes, 3);
+        assert_eq!(maos.ver(Jogador::Um).total(), 8);
+        assert_eq!(maos.ver(Jogador::Dois).total(), 8);
+    }
+
+    #[test]
+    fn gatao_colocado_entre_gatinhos_continua_boopando() {
+        let mut tabuleiro = Tabuleiro::novo();
+        let mut maos = Maos::novas();
+        poe(&mut tabuleiro, &mut maos, 2, 1, Peca::Gatinho, Jogador::Um);
+        poe(&mut tabuleiro, &mut maos, 2, 3, Peca::Gatinho, Jogador::Um);
+        // Um gatao na mao (equivalente a um trio graduado antes do cenario).
+        let mao = maos.de(Jogador::Um);
+        mao.gatinhos -= 1;
+        mao.gatoes += 1;
+
+        let jogada = Jogada {
+            peca: Peca::Gatao,
+            linha: 2,
+            coluna: 2,
+        };
+        fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
+
+        // Gatao no meio nao forma trio de gatinhos, entao o boop acontece.
+        assert!(todas_vazias(&tabuleiro, &[(2, 1), (2, 3)]));
+        assert_eq!(
+            tabuleiro.get(2, 0),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Um))
+        );
+        assert_eq!(
+            tabuleiro.get(2, 4),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Um))
+        );
+        assert_eq!(
+            tabuleiro.get(2, 2),
+            Some(Gato::novo(Peca::Gatao, Jogador::Um))
+        );
+        assert_eq!(maos.ver(Jogador::Um).total(), 8);
+    }
+
+    #[test]
+    fn jogada_que_nao_fecha_trio_continua_boopando() {
+        let mut tabuleiro = Tabuleiro::novo();
+        let mut maos = Maos::novas();
+        poe(&mut tabuleiro, &mut maos, 3, 3, Peca::Gatinho, Jogador::Um);
+
+        let jogada = Jogada {
+            peca: Peca::Gatinho,
+            linha: 3,
+            coluna: 2,
+        };
+        fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
+
+        assert!(todas_vazias(&tabuleiro, &[(3, 3)]));
+        assert_eq!(
+            tabuleiro.get(3, 4),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Um))
+        );
+        assert_eq!(
+            tabuleiro.get(3, 2),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Um))
+        );
+        assert_eq!(maos.ver(Jogador::Um).gatoes, 0);
+        assert_eq!(maos.ver(Jogador::Um).total(), 8);
+    }
+
+    #[test]
+    fn trio_formado_pelo_proprio_boop_ainda_gradua() {
+        let mut tabuleiro = Tabuleiro::novo();
+        let mut maos = Maos::novas();
+        poe(&mut tabuleiro, &mut maos, 2, 0, Peca::Gatinho, Jogador::Um);
+        poe(&mut tabuleiro, &mut maos, 2, 1, Peca::Gatinho, Jogador::Um);
+        poe(&mut tabuleiro, &mut maos, 3, 2, Peca::Gatinho, Jogador::Um);
+
+        // A colocacao em (4, 2) nao fecha trio, entao o boop acontece e
+        // empurra (3, 2) para (2, 2), completando a linha 2.
+        let jogada = Jogada {
+            peca: Peca::Gatinho,
+            linha: 4,
+            coluna: 2,
+        };
+        fluxo_jogo(&mut tabuleiro, &jogada, Jogador::Um, &mut maos);
+
+        assert!(todas_vazias(&tabuleiro, &[(2, 0), (2, 1), (2, 2), (3, 2)]));
+        assert_eq!(
+            tabuleiro.get(4, 2),
+            Some(Gato::novo(Peca::Gatinho, Jogador::Um))
+        );
+        assert_eq!(maos.ver(Jogador::Um).gatoes, 3);
+        assert_eq!(maos.ver(Jogador::Um).ativas, 1);
+        assert_eq!(maos.ver(Jogador::Um).total(), 8);
+    }
+}
