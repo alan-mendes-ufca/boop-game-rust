@@ -7,7 +7,7 @@
 //! tres casas ficam marcadas como consumidas e nenhum outro trio pode
 //! reutiliza-las.
 
-use crate::tipos::*;
+use crate::model::tipos::*;
 
 /// Gradua todos os trios de gatinhos do jogador presentes no tabuleiro.
 ///

@@ -1,6 +1,6 @@
 //! Exibicao do tabuleiro e arte ASCII. Origem: `tabuleiro/tabuleiro.c`.
 
-use crate::tipos::*;
+use crate::model::tipos::*;
 use std::io::{self, Write};
 
 /// Arte ASCII do gato em braille Unicode.

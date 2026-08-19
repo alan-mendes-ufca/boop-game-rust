@@ -1,22 +1,17 @@
 //! Boop - jogo de tabuleiro para dois jogadores.
 //!
 //! Reimplementacao em Rust do projeto originalmente escrito em C
-//! (`JogoBoop/`), preservando a modularizacao do original:
+//! (`JogoBoop/`), organizada em tres camadas no estilo MVC:
 //!
-//! | modulo Rust     | origem em C              |
-//! |-----------------|--------------------------|
-//! | [`tipos`]       | `funcoes.h`              |
-//! | [`tabuleiro`]   | `tabuleiro/tabuleiro.c`  |
-//! | [`jogada`]      | `jogada/jogada.c`        |
-//! | [`graduar`]     | `graduar/graduar.c`      |
-//! | [`vitoria`]     | `vitoria/vencer.c`       |
-//! | [`funcoes`]     | `funcoes.c`              |
+//! - [`model`]: dados e regras do jogo, sem nenhum IO;
+//! - [`view`]: leitura da entrada e desenho do tabuleiro no terminal;
+//! - [`controller`]: orquestra as duas, um turno de cada vez.
+//!
+//! A dependencia so aponta para dentro: o controller usa view e model, a view
+//! usa o model, e o model nao conhece ninguem.
 
-pub mod funcoes;
-pub mod graduar;
-pub mod jogada;
-pub mod tabuleiro;
-pub mod tipos;
-pub mod vitoria;
+pub mod controller;
+pub mod model;
+pub mod view;
 
-pub use tipos::*;
+pub use model::tipos::*;

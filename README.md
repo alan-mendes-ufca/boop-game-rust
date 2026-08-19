@@ -1,4 +1,4 @@
-# Boop - Jogo de Tabuleiro em Rust
+# 🐱 Boop - Jogo de Tabuleiro em Rust
 
 Reimplementação em Rust do jogo de tabuleiro **Boop**, um jogo estratégico de dois jogadores onde gatos adoráveis competem pelo domínio do tabuleiro através do efeito "boop" (empurrão). Este é um port do [projeto original em C](https://github.com/alan-mendes-ufca/Boop-game).
 
@@ -64,16 +64,40 @@ Não há dependências externas; o projeto usa apenas a biblioteca padrão do Ru
 
 ## Estrutura do Projeto
 
-| Módulo Rust | Origem em C | Responsabilidade |
-|---|---|---|
-| `tipos.rs` | `funcoes.h` | Definições de tipos: `Peca`, `Jogador`, constantes e estruturas de dados |
-| `tabuleiro.rs` | `tabuleiro/tabuleiro.c` | Inicialização e exibição do tabuleiro 6×6 |
-| `jogada.rs` | `jogada/jogada.c` | Validação de jogadas e aplicação do efeito boop |
-| `graduar.rs` | `graduar/graduar.c` | Detecção de alinhamentos de 3 peças e graduação |
-| `vitoria.rs` | `vitoria/vencer.c` | Detecção de condições de vitória e empate |
-| `funcoes.rs` | `funcoes.c` | Funções auxiliares e leitura de entrada |
-| `main.rs` | `main.c` | Loop principal do jogo |
-| `tests/regras.rs` | — | Testes automatizados (novo em relação ao original) |
+O `src/` é organizado em três camadas no estilo **MVC**. A dependência só
+aponta para dentro: o *controller* usa *view* e *model*, a *view* usa o
+*model*, e o *model* não conhece ninguém (não tem nenhum `println!` nem
+`std::io`).
+
+```
+src/
+├── main.rs            ponto de entrada, só chama o controller
+├── lib.rs             declara as três camadas
+├── model/             dados e regras do jogo, sem nenhum IO
+│   ├── tipos.rs
+│   ├── jogada.rs
+│   ├── graduar.rs
+│   └── vitoria.rs
+├── view/              tudo que fala com o terminal
+│   ├── tabuleiro.rs
+│   └── entrada.rs
+└── controller/        liga a view ao model
+    ├── turno.rs
+    └── jogo.rs
+```
+
+| Módulo Rust | Camada | Origem em C | Responsabilidade |
+|---|---|---|---|
+| `model/tipos.rs` | Model | `funcoes.h` | Definições de tipos: `Peca`, `Jogador`, constantes e estruturas de dados |
+| `model/jogada.rs` | Model | `jogada/jogada.c` | A `Jogada`, validação de jogadas e aplicação do efeito boop |
+| `model/graduar.rs` | Model | `graduar/graduar.c` | Detecção de alinhamentos de 3 peças e graduação |
+| `model/vitoria.rs` | Model | `vitoria/vencer.c` | Detecção de condições de vitória e empate |
+| `view/tabuleiro.rs` | View | `tabuleiro/tabuleiro.c` | Exibição do tabuleiro 6×6 e da arte ASCII |
+| `view/entrada.rs` | View | `funcoes.c` (leitura) | Prompt, leitura e parsing do texto digitado em uma `Jogada` |
+| `controller/turno.rs` | Controller | `fluxoJogo` em `funcoes.c` | Ordem de um turno: colocação → boop → graduação |
+| `controller/jogo.rs` | Controller | `main.c` | Laço principal do jogo |
+| `main.rs` | — | `main.c` | Ponto de entrada do executável |
+| `tests/regras.rs` | — | — | Testes automatizados (novo em relação ao original) |
 
 ## O Que Mudou em Relação ao C
 
@@ -86,6 +110,7 @@ Não há dependências externas; o projeto usa apenas a biblioteca padrão do Ru
 - **Entrada**: Validação robusta em vez de `scanf` desprotegido
 - **Invariante de peças**: Contagem garantida por `gatinhos + gatoes + ativas == 8`
 - **Testes**: Suite de testes automatizados com `cargo test` (não existia no original)
+- **Arquitetura**: Código separado em model/view/controller, com o model livre de qualquer entrada ou saída (no original as regras e os `printf` moravam nos mesmos arquivos)
 
 ## Nota
 

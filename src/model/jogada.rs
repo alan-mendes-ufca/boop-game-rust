@@ -1,7 +1,15 @@
 //! Validacao da jogada e efeito boop. Origem: `jogada/jogada.c`.
 
-use crate::tipos::*;
+use crate::model::tipos::*;
 use std::fmt;
+
+/// Uma jogada ja convertida para indices do tabuleiro (base 0).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Jogada {
+    pub peca: Peca,
+    pub linha: usize,
+    pub coluna: usize,
+}
 
 /// Motivo pelo qual uma jogada foi recusada.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

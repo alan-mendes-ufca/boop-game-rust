@@ -1,6 +1,6 @@
 //! Condicoes de fim de jogo. Origem: `vitoria/vencer.c`.
 
-use crate::tipos::*;
+use crate::model::tipos::*;
 
 /// Como a partida terminou.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

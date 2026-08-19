@@ -2,15 +2,16 @@
 //! especificacao (nao a partir da implementacao) contra a API publica do
 //! crate `boop`.
 //!
-//! Enquanto `jogada`, `graduar` e `vitoria` ainda contem `todo!()`, este
+//! Enquanto os modulos de regra ainda contem `todo!()`, este
 //! arquivo deve continuar COMPILANDO; os testes so devem passar quando as
 //! implementacoes estiverem prontas.
 
-use boop::funcoes::{fluxo_jogo, parse_jogada, EntradaInvalida, Jogada};
-use boop::graduar::graduar;
-use boop::jogada::{faz_boop, verificar_jogada, JogadaInvalida};
-use boop::tipos::{Gato, Jogador, Mao, Maos, Peca, Tabuleiro};
-use boop::vitoria::{estado_do_jogo, verifica_vitoria, verificar_empate, FimDeJogo};
+use boop::controller::turno::fluxo_jogo;
+use boop::model::graduar::graduar;
+use boop::model::jogada::{faz_boop, verificar_jogada, Jogada, JogadaInvalida};
+use boop::model::tipos::{Gato, Jogador, Mao, Maos, Peca, Tabuleiro};
+use boop::model::vitoria::{estado_do_jogo, verifica_vitoria, verificar_empate, FimDeJogo};
+use boop::view::entrada::{parse_jogada, EntradaInvalida};
 
 // ---------------------------------------------------------------------
 // Auxiliares de cenario
